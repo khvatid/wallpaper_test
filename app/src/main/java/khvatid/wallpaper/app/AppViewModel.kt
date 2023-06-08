@@ -17,13 +17,6 @@ class AppViewModel @Inject constructor(
     override val state: MutableStateFlow<AppContract.State> =
         MutableStateFlow(AppContract.State(navController = navHostController))
 
-    /* init {
-         viewModelScope.launch(Dispatchers.IO) {
-             getIsDynamicThemeUseCase.execute().collect {
-                 state.compareAndSet(state.value, state.value.copy(isDynamicTheme = it))
-             }
-         }
-     }*/
 
     override fun obtainEvent(event: AppContract.Event) {
         when (event) {
@@ -42,10 +35,9 @@ class AppViewModel @Inject constructor(
     }
 
     private fun reduce(event: AppContract.Event.NavigateToSlug) {
-
         state.value.navController.navigate(route = WallpaperGraphRoutes.CategoryImages(event.slug).route)
 
-        //state.compareAndSet(state.value, state.value.copy(showAppBar = false))
+
     }
 
 }

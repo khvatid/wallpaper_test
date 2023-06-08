@@ -7,6 +7,7 @@ import dagger.hilt.android.components.ViewModelComponent
 import khvatid.wallpaper.domain.repository.ImagesRepository
 import khvatid.wallpaper.domain.usecase.GetCategoriesUseCase
 import khvatid.wallpaper.domain.usecase.GetCategoryImagesUseCase
+import khvatid.wallpaper.domain.usecase.GetImageUseCase
 
 
 @Module
@@ -24,4 +25,9 @@ class DomainModule {
         return GetCategoryImagesUseCase(imagesRepository = imagesRepository)
     }
 
+
+    @Provides
+    fun provideGetImageUseCase(imagesRepository: ImagesRepository): GetImageUseCase {
+        return GetImageUseCase(imagesRepository)
+    }
 }

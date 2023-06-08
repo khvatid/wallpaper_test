@@ -34,5 +34,16 @@ class UnsplashApiSourceImp(networkInstance: NetworkInstance) : UnsplashApiSource
         }
     }
 
+    override suspend fun getPhoto(id: String): ResultModel<PhotoModel> {
+        val response: Response<PhotoModel> =
+            service.getPhoto(id = id, clientId = UNSPLASH_TOKEN)
+        return if (response.isSuccessful) {
+            //Log.i("API","${response.body()}")
+            ResultModel.Success(response.body())
+        } else {
+            ResultModel.Failure(response.code(), response.message())
+        }
+    }
+
 
 }

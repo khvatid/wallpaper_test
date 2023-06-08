@@ -9,4 +9,6 @@ interface ImagesRepository {
 
     suspend fun getCategories(page: Int): Flow<Resource<List<CategoryModel>>>
     suspend fun getImages(category: String, page: Int): Flow<Resource<List<ImageModel>>>
+
+    suspend fun getImage(id: String): Flow<Resource<ImageModel>>
 }

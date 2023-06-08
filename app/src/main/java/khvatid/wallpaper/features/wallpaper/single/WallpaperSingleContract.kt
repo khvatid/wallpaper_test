@@ -1,6 +1,15 @@
 package khvatid.wallpaper.features.wallpaper.single
 
+import khvatid.wallpaper.domain.models.ImageModel
+
 interface WallpaperSingleContract {
-    class State
-    sealed class Event
+    data class State(
+        val id: String = "",
+        val isLoading: Boolean = false,
+        val image: ImageModel = ImageModel("","")
+    )
+
+    sealed class Event {
+        data class OpenScreen(val id: String) : Event()
+    }
 }
