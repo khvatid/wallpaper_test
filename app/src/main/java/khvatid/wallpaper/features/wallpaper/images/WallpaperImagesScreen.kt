@@ -52,7 +52,7 @@ private fun WallpaperImagesScreenUi(
         content = {
             items(state.listImage) { image ->
                 SubcomposeAsyncImage(
-                    model = image.url,
+                    model = image.urls.small,
                     loading = {
                         LoadingShimmerEffect(
                             modifier = imageModifier,

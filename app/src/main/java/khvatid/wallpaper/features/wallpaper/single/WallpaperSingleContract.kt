@@ -6,7 +6,7 @@ interface WallpaperSingleContract {
     data class State(
         val id: String = "",
         val isLoading: Boolean = false,
-        val image: ImageModel = ImageModel("","")
+        val image: ImageModel = ImageModel()
     )
 
     sealed class Event {
