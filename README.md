@@ -1,6 +1,17 @@
-![kikimora_note](https://socialify.git.ci/khvatid/kikimora_note/image?description=1&descriptionEditable=&font=Jost&language=1&name=1&pattern=Solid&theme=Dark)
+![wallpaper_test](https://socialify.git.ci/khvatid/wallpaper_test/image?font=Jost&language=1&name=1&pattern=Diagonal%20Stripes&theme=Dark)
 <h2>Description</h2>
-I don't know yet what will come of it.
+Application with beautiful images from Unsplash API
+
+
+## To Do List
+
+*   Refactoring
+    *  Transfer image setting logic to service
+    *  Move variables to a state
+    *  Remove text from image screen
+*   Add share image
+*   Add save image to device
+*   Add settings
 
 
 
@@ -12,5 +23,4 @@ Technologies used in the project:
 *   Dagger-Hilt
 *   Retrofit
 *   Room
-*   Data store
 *   Coil
