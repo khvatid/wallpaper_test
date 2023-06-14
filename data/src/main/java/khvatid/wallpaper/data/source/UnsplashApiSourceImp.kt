@@ -3,7 +3,7 @@ package khvatid.wallpaper.data.source
 import khvatid.wallpaper.data.store.retrofit.NetworkInstance
 import khvatid.wallpaper.data.store.retrofit.UnsplashApi
 import khvatid.wallpaper.data.store.retrofit.models.PhotoModel
-import khvatid.wallpaper.data.store.retrofit.models.ResultModel
+import khvatid.wallpaper.data.store.ResultModel
 import khvatid.wallpaper.data.store.retrofit.models.TopicModel
 import khvatid.wallpaper.data.store.retrofit.source.UnsplashApiSource
 import khvatid.wallpaper.data.utils.UNSPLASH_TOKEN

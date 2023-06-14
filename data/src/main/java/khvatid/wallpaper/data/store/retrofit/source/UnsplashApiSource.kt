@@ -1,7 +1,7 @@
 package khvatid.wallpaper.data.store.retrofit.source
 
 import khvatid.wallpaper.data.store.retrofit.models.PhotoModel
-import khvatid.wallpaper.data.store.retrofit.models.ResultModel
+import khvatid.wallpaper.data.store.ResultModel
 import khvatid.wallpaper.data.store.retrofit.models.TopicModel
 
 

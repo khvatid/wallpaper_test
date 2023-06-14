@@ -1,4 +1,4 @@
-package khvatid.wallpaper.data.store.retrofit.models
+package khvatid.wallpaper.data.store
 
 sealed class ResultModel<out T>{
 

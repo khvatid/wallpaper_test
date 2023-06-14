@@ -11,5 +11,6 @@ interface WallpaperSingleContract {
 
     sealed class Event {
         data class OpenScreen(val id: String) : Event()
+        object AddToFavorite: Event()
     }
 }

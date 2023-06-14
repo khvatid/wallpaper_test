@@ -2,10 +2,9 @@ package khvatid.wallpaper.features.wallpaper.single
 
 import android.app.WallpaperManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.horizontalScroll
@@ -15,8 +14,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -30,14 +32,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
@@ -68,17 +71,19 @@ private fun WallpaperSingleScreenUi(
 ) {
     val context = LocalContext.current
     val wallpaperManager = WallpaperManager.getInstance(context)
-    var loaded by remember {
-        mutableStateOf(false)
-    }
-    val screenWidth = LocalConfiguration.current.screenWidthDp
-    val screenHeight = LocalConfiguration.current.screenHeightDp
     val density = LocalDensity.current
+    val screenSize = IntSize(
+        width = LocalConfiguration.current.screenWidthDp * density.density.roundToInt(),
+        height = LocalConfiguration.current.screenHeightDp * density.density.roundToInt()
+    )
+    var ratioScreenToDrawable by remember { mutableStateOf(Size.Zero) }
+    var ratioImageToDrawable by remember { mutableStateOf(Size.Zero) }
+
     val scrollState = rememberScrollState()
-    var offset by remember { mutableStateOf(IntOffset.Zero) }
+    var drawableSize by remember {
+        mutableStateOf(IntSize.Zero)
+    }
     var imageSize by remember { mutableStateOf(IntSize.Zero) }
-    var ratio by remember { mutableStateOf(1f) }
-    var scale by remember { mutableStateOf(1f) }
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data(state.image.urls.full)
@@ -87,18 +92,15 @@ private fun WallpaperSingleScreenUi(
             .build(),
         contentScale = ContentScale.Fit,
         onSuccess = {
-            /*bitmap = it.result.drawable.toBitmap(
-                it.result.drawable.intrinsicWidth,
-                it.result.drawable.intrinsicHeight,
-                it.result.request.bitmapConfig
-            )*/
-            val options = BitmapFactory.Options()
-            options.inJustDecodeBounds = false
-            options.inSampleSize = 1
+            drawableSize = IntSize(
+                it.result.drawable.toBitmap().width,
+                it.result.drawable.toBitmap().height,
+            )
+            ratioScreenToDrawable = Size(
+                screenSize.width / it.result.drawable.intrinsicWidth.toFloat(),
+                screenSize.height / it.result.drawable.intrinsicHeight.toFloat()
+            )
 
-
-            scale = it.result.drawable.intrinsicWidth.toFloat()
-            loaded = true
         }
     )
     Box(
@@ -113,6 +115,10 @@ private fun WallpaperSingleScreenUi(
                 //.aspectRatio(ratio, true)
                 .onGloballyPositioned {
                     imageSize = it.size
+                    ratioImageToDrawable = Size(
+                        it.size.width.toFloat() / drawableSize.width,
+                        it.size.height.toFloat() / drawableSize.height
+                    )
                 },
             painter = painter,
             contentScale = ContentScale.FillHeight,
@@ -121,17 +127,21 @@ private fun WallpaperSingleScreenUi(
 
 
 
+                Text(
+                    text =
+                    "screen size: $screenSize  -> ${(screenSize.width / ratioImageToDrawable.width)*ratioScreenToDrawable.width}x${screenSize.height / ratioImageToDrawable.height}\n" +
 
-
-        Text(
-            text = "scroll value: ${scrollState.value / ratio}\n" +
-                    "image size: ${imageSize}\n" +
-                    "screen size: ${screenWidth * density.density}x${screenHeight * density.density}\n" +
-                    "\n\n wallpaper bitmap width: ${(screenWidth * density.density).roundToInt()}x ",
-            modifier = Modifier
-                .padding(100.dp)
-                .fillMaxSize()
-        )
+                            "image size: $imageSize\n" +
+                            "drawable size: $drawableSize\n" +
+                            "ratio screen / drawable: $ratioScreenToDrawable\n" +
+                            "ratio image / drawable: $ratioImageToDrawable \n" +
+                            "scroll value: ${scrollState.value}\n" +
+                            "scroll value / rationScreenX: ${(scrollState.value / ratioScreenToDrawable.width)}\n" +
+                            "scroll value / rationScreenX: ${(scrollState.value / ratioImageToDrawable.width)}\n",
+                    modifier = Modifier
+                        .padding(100.dp)
+                        .fillMaxSize()
+                )
 
 
 
@@ -161,48 +171,38 @@ private fun WallpaperSingleScreenUi(
                 .clip(MaterialTheme.shapes.extraLarge),
             windowInsets = WindowInsets(0, 0, 0, 0),
             actions = {
-                Text(text = "ПОДЕЛИТЬСЯ")
-                Text(text = "СКАЧАТЬ")
                 IconButton(onClick = { /*TODO*/ }) {
 
-                    //Icon(imageVector = Icons.Rounded.Share, contentDescription = null)
                 }
-                IconButton(onClick = { /*TODO*/ }) {
-
-
-                    // Icon(imageVector = Icons.Rounded.Star, contentDescription = null)
+                IconButton(onClick = { event(WallpaperSingleContract.Event.AddToFavorite) }) {
+                    Icon(imageVector = Icons.Rounded.Favorite, contentDescription = null)
                 }
             }, floatingActionButton = {
 
                 ExtendedFloatingActionButton(onClick = {
                     CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
                         try {
-
                             val ps = painter.state
                             when (ps) {
                                 is AsyncImagePainter.State.Success -> {
-                                    var nBitmap = Bitmap.createBitmap(
-                                        (screenWidth * density.density).roundToInt(),
-                                        (screenHeight * density.density).roundToInt(),
-                                        Bitmap.Config.ARGB_8888
-                                    )
-                                    val canvas = Canvas(nBitmap)
                                     val srcRect = Rect(
-                                        scrollState.value,
+                                        (scrollState.value / ratioScreenToDrawable.width / ratioImageToDrawable.width).roundToInt(),
                                         0,
-                                       scrollState.value + (screenWidth * density.density).roundToInt(),
-                                        (screenHeight * density.density).roundToInt()
+                                        (screenSize.width) / ratioImageToDrawable.width.roundToInt(),
+                                        ps.result.drawable.intrinsicHeight
+                                    )
+                                    val bitmap = ps.result.drawable.toBitmap()
+
+                                    Log.i("BITMAP","RECT: ${srcRect.toString()} \n ${bitmap.width}x${bitmap.height}")
+                                    var nBitmap = Bitmap.createBitmap(
+                                        bitmap,
+                                        srcRect.left,
+                                        srcRect.top,
+                                        srcRect.right - 1,
+                                        srcRect.bottom
                                     )
 
-                                    val destRect = Rect(
-                                        0, 0, (screenWidth * density.density).roundToInt(),
-                                        (screenHeight * density.density).roundToInt(),
-                                    )
-                                    val drawable = ps.result.drawable
-                                    drawable.apply {
-                                        this.bounds = srcRect
-                                        this.draw(canvas)
-                                    }
+
                                     wallpaperManager.setBitmap(nBitmap)
 
                                 }
