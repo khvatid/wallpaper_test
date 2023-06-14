@@ -1,10 +1,12 @@
 package khvatid.wallpaper.features.wallpaper.single
 
 import android.app.WallpaperManager
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Rect
+import android.net.Uri
 import android.os.Build
-import android.util.Log
+import android.webkit.MimeTypeMap
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.horizontalScroll
@@ -40,6 +42,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImagePainter
@@ -48,6 +51,8 @@ import coil.request.ImageRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
 import kotlin.math.roundToInt
 
 
@@ -124,47 +129,6 @@ private fun WallpaperSingleScreenUi(
             contentScale = ContentScale.FillHeight,
             contentDescription = null
         )
-
-
-
-                Text(
-                    text =
-                    "screen size: $screenSize  -> ${(screenSize.width / ratioImageToDrawable.width)*ratioScreenToDrawable.width}x${screenSize.height / ratioImageToDrawable.height}\n" +
-
-                            "image size: $imageSize\n" +
-                            "drawable size: $drawableSize\n" +
-                            "ratio screen / drawable: $ratioScreenToDrawable\n" +
-                            "ratio image / drawable: $ratioImageToDrawable \n" +
-                            "scroll value: ${scrollState.value}\n" +
-                            "scroll value / rationScreenX: ${(scrollState.value / ratioScreenToDrawable.width)}\n" +
-                            "scroll value / rationScreenX: ${(scrollState.value / ratioImageToDrawable.width)}\n",
-                    modifier = Modifier
-                        .padding(100.dp)
-                        .fillMaxSize()
-                )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         BottomAppBar(
             modifier = Modifier
                 .padding(horizontal = 32.dp, vertical = 24.dp)
@@ -180,41 +144,41 @@ private fun WallpaperSingleScreenUi(
             }, floatingActionButton = {
 
                 ExtendedFloatingActionButton(onClick = {
-                    CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
-                        try {
-                            val ps = painter.state
-                            when (ps) {
-                                is AsyncImagePainter.State.Success -> {
-                                    val srcRect = Rect(
-                                        (scrollState.value / ratioScreenToDrawable.width / ratioImageToDrawable.width).roundToInt(),
-                                        0,
-                                        (screenSize.width) / ratioImageToDrawable.width.roundToInt(),
-                                        ps.result.drawable.intrinsicHeight
-                                    )
-                                    val bitmap = ps.result.drawable.toBitmap()
+                    CoroutineScope(Dispatchers.Main).launch(Dispatchers.IO) {
+                        val ps = painter.state
+                        when (ps) {
+                            is AsyncImagePainter.State.Success -> {
 
-                                    Log.i("BITMAP","RECT: ${srcRect.toString()} \n ${bitmap.width}x${bitmap.height}")
-                                    var nBitmap = Bitmap.createBitmap(
-                                        bitmap,
-                                        srcRect.left,
-                                        srcRect.top,
-                                        srcRect.right - 1,
-                                        srcRect.bottom
-                                    )
-
-
-                                    wallpaperManager.setBitmap(nBitmap)
-
+                                val cacheDir = context.cacheDir
+                                val file = File(cacheDir, "${state.id}.jpg")
+                                try {
+                                    val outputStream = FileOutputStream(file)
+                                    ps.result.drawable.toBitmap().compress(Bitmap.CompressFormat.JPEG,100,outputStream)
+                                    outputStream.flush()
+                                    outputStream.close()
+                                }catch (e : Exception){
+                                    e.printStackTrace()
                                 }
-
-                                else -> throw NullPointerException("Bitmap not found")
-
+                                val fileUri: Uri = FileProvider.getUriForFile(context, "khvatid.wallpaper.fileprovider", file)
+                                val intent = Intent(Intent.ACTION_ATTACH_DATA).apply {
+                                    addCategory(Intent.CATEGORY_DEFAULT)
+                                    setDataAndType(fileUri,"image/*")
+                                    putExtra("mimeType","image/*")
+                                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                }
+                                try {
+                                    context.startActivity(Intent.createChooser(intent, "Set as Wallpaper"))
+                                } catch (e: ActivityNotFoundException) {
+                                    e.printStackTrace()
+                                }
 
                             }
 
-                        } catch (e: Exception) {
-                            e.printStackTrace()
+                            else -> throw NullPointerException("Bitmap not found")
+
+
                         }
+
                     }
                 }) {
                     Text(text = "Set as wallpaper", modifier = Modifier.padding(horizontal = 8.dp))
@@ -223,6 +187,17 @@ private fun WallpaperSingleScreenUi(
     }
 }
 
+private fun getMimeType(url: String): String? {
+    var type: String? = null
+    val extension = MimeTypeMap.getFileExtensionFromUrl(url)
+    if (extension != null) {
+        type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+    }
+    return type
+}
+
+
 private val imageModifier = Modifier
 private val rowBoxModifier = Modifier.height(56.dp)
+
 
