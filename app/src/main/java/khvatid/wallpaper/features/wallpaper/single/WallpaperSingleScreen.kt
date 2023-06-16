@@ -28,12 +28,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import khvatid.wallpaper.R
 import khvatid.wallpaper.features.wallpaper.single.WallpaperSingleContract.Event.SetAs
 import khvatid.wallpaper.features.wallpaper.single.WallpaperSingleContract.Event.ShareImage
 import khvatid.wallpaper.ui.components.LoadingShimmerEffect
@@ -139,7 +141,7 @@ fun BottomMenu(
 
             ExtendedFloatingActionButton(onClick = onSetAsClick) {
                 Text(
-                    text = "Set as wallpaper",
+                    text = stringResource(id = R.string.set_as),
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
             }
