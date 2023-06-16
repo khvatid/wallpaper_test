@@ -3,12 +3,16 @@
 Application with beautiful images from Unsplash API
 
 
-## To Do List
+## Use Cases
 
-*   Add share image +
-*   Add save image to device
-*   Add settings
-
+*   [GetCategoriesUseCase.kt](domain%2Fsrc%2Fmain%2Fjava%2Fkhvatid%2Fwallpaper%2Fdomain%2Fusecase%2FGetCategoriesUseCase.kt)
+*   [GetCategoryImagesUseCase.kt](domain%2Fsrc%2Fmain%2Fjava%2Fkhvatid%2Fwallpaper%2Fdomain%2Fusecase%2FGetCategoryImagesUseCase.kt)
+*   [GetFavoriteImagesUseCase.kt](domain%2Fsrc%2Fmain%2Fjava%2Fkhvatid%2Fwallpaper%2Fdomain%2Fusecase%2FGetFavoriteImagesUseCase.kt)
+*   [GetFavoriteImageUseCase.kt](domain%2Fsrc%2Fmain%2Fjava%2Fkhvatid%2Fwallpaper%2Fdomain%2Fusecase%2FGetFavoriteImageUseCase.kt)
+*   [GetImageUseCase.kt](domain%2Fsrc%2Fmain%2Fjava%2Fkhvatid%2Fwallpaper%2Fdomain%2Fusecase%2FGetImageUseCase.kt)
+*   [GetThemeSettingUseCase.kt](domain%2Fsrc%2Fmain%2Fjava%2Fkhvatid%2Fwallpaper%2Fdomain%2Fusecase%2FGetThemeSettingUseCase.kt)
+*   [SaveToFavoriteImageUseCase.kt](domain%2Fsrc%2Fmain%2Fjava%2Fkhvatid%2Fwallpaper%2Fdomain%2Fusecase%2FSaveToFavoriteImageUseCase.kt)
+*   [SetThemeSettingUseCase.kt](domain%2Fsrc%2Fmain%2Fjava%2Fkhvatid%2Fwallpaper%2Fdomain%2Fusecase%2FSetThemeSettingUseCase.kt)
 
 
 <h2>💻 Built with</h2>
