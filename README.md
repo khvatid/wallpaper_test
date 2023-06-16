@@ -5,11 +5,7 @@ Application with beautiful images from Unsplash API
 
 ## To Do List
 
-*   Refactoring
-    *  Transfer image setting logic to service
-    *  Move variables to a state
-    *  Remove text from image screen
-*   Add share image
+*   Add share image +
 *   Add save image to device
 *   Add settings
 

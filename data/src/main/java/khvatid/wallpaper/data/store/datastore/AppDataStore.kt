@@ -10,7 +10,7 @@ class AppDataStore(private val context: Context) {
    val invoke get() = context.dataStore
    companion object {
       private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
-         name = "Ai_app_preferences"
+         name = "Wallpaper_app_preferences"
       )
    }
 }

@@ -10,7 +10,7 @@ import khvatid.wallpaper.data.store.room.entity.ImageEntity
 @Database(
     entities = [(ImageEntity::class)],
     exportSchema = true,
-    version = 1,
+    version = 2,
 )
 abstract class WallpaperAppDatabase : RoomDatabase(){
     abstract fun imagesDao(): ImagesDao

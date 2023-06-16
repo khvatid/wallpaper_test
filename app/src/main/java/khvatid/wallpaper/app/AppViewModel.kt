@@ -1,23 +1,34 @@
 package khvatid.wallpaper.app
 
 
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import dagger.hilt.android.lifecycle.HiltViewModel
+import khvatid.wallpaper.domain.usecase.GetThemeSettingUseCase
 import khvatid.wallpaper.features.wallpaper.WallpaperGraphRoutes
 import khvatid.wallpaper.utils.ViewModelMVI
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AppViewModel @Inject constructor(
     navHostController: NavHostController,
+    getThemeSettingUseCase: GetThemeSettingUseCase
 ) : ViewModelMVI<AppContract.State, AppContract.Event>() {
 
 
     override val state: MutableStateFlow<AppContract.State> =
         MutableStateFlow(AppContract.State(navController = navHostController))
 
+    init {
+        viewModelScope.launch {
+            getThemeSettingUseCase.execute().collect { theme ->
+                state.update { it.copy(themeSettingModel = theme) }
+            }
+        }
+    }
 
     override fun obtainEvent(event: AppContract.Event) {
         when (event) {
@@ -40,11 +51,13 @@ class AppViewModel @Inject constructor(
     }
 
     private fun reduce(event: AppContract.Event.NavigateToSettings) {
-        state.value.navController.navigate(route = "settings")
+        if (state.value.route != "settings")
+            state.value.navController.navigate(route = "settings")
     }
 
     private fun reduce(event: AppContract.Event.NavigateToFavorite) {
-        state.value.navController.navigate(route = "favorite")
+        if (state.value.route != "favorite")
+            state.value.navController.navigate(route = "favorite")
 
     }
 

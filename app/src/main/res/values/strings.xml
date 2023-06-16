@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">wallpaper</string>
 
+
+    <string name="dynamic_theme">Dynamic theme</string>
+    <string name="dark_theme">Dark theme</string>
+    <string name="system_theme">System theme</string>
+    <string name="set_as">Set as</string>
 </resources>

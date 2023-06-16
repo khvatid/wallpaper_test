@@ -7,7 +7,7 @@ import khvatid.wallpaper.data.store.room.source.DatabaseImagesSource
 import kotlinx.coroutines.flow.Flow
 
 class DatabaseImagesSourceImp(private val imagesDao: ImagesDao) : DatabaseImagesSource {
-    override suspend fun getImage(id: String): Flow<ImageEntity> = imagesDao.getOne(id)
+    override suspend fun getImage(id: String): Flow<ImageEntity?> = imagesDao.getOne(id)
 
     override suspend fun getListImage(): Flow<List<ImageEntity>> = imagesDao.getList()
 
@@ -15,16 +15,16 @@ class DatabaseImagesSourceImp(private val imagesDao: ImagesDao) : DatabaseImages
         imagesDao.insert(imageEntity)
         null
     } catch (e: Exception) {
-        Log.i("IMAGE_SOURCE",e.stackTraceToString())
+        Log.i("IMAGE_SOURCE", e.stackTraceToString())
         throw e
     }
 
 
-    override suspend fun deleteImage(id: String): Throwable? =try {
+    override suspend fun deleteImage(id: String): Throwable? = try {
         imagesDao.delete(id)
         null
-    }catch (e: Exception){
-        Log.i("IMAGE_SOURCE",e.stackTraceToString())
+    } catch (e: Exception) {
+        Log.i("IMAGE_SOURCE", e.stackTraceToString())
         throw e
     }
 

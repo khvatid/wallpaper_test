@@ -20,7 +20,8 @@ class LocalImagesRepositoryImp(private val imagesSource: DatabaseImagesSource) :
 
     override suspend fun getImage(id: String): Flow<Resource<ImageModel>> =
         imagesSource.getImage(id).map {
-            Resource.Success(it.toImageModel())
+            if (it == null) Resource.Error("its not favorite")
+            else Resource.Success(it.toImageModel())
         }.catch {
             Resource.Error("${it.message}")
         }

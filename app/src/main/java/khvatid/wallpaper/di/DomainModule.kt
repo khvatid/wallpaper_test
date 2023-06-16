@@ -4,13 +4,17 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
+import khvatid.wallpaper.domain.repository.AppSettingRepository
 import khvatid.wallpaper.domain.repository.ImagesRepository
 import khvatid.wallpaper.domain.repository.LocalImagesRepository
 import khvatid.wallpaper.domain.usecase.GetCategoriesUseCase
 import khvatid.wallpaper.domain.usecase.GetCategoryImagesUseCase
+import khvatid.wallpaper.domain.usecase.GetFavoriteImageUseCase
 import khvatid.wallpaper.domain.usecase.GetFavoriteImagesUseCase
 import khvatid.wallpaper.domain.usecase.GetImageUseCase
+import khvatid.wallpaper.domain.usecase.GetThemeSettingUseCase
 import khvatid.wallpaper.domain.usecase.SaveToFavoriteImageUseCase
+import khvatid.wallpaper.domain.usecase.SetThemeSettingUseCase
 
 
 @Module
@@ -28,7 +32,6 @@ class DomainModule {
         return GetCategoryImagesUseCase(imagesRepository = imagesRepository)
     }
 
-
     @Provides
     fun provideGetImageUseCase(imagesRepository: ImagesRepository): GetImageUseCase {
         return GetImageUseCase(imagesRepository)
@@ -39,8 +42,23 @@ class DomainModule {
     }
 
     @Provides
-    fun provideGetFavoritesImagesUseCase(localImagesRepository: LocalImagesRepository): GetFavoriteImagesUseCase{
+    fun provideGetFavoriteImagesUseCase(localImagesRepository: LocalImagesRepository): GetFavoriteImagesUseCase{
         return GetFavoriteImagesUseCase(repository = localImagesRepository)
+    }
+
+    @Provides
+    fun provideGetFavoriteImageUseCase(localImagesRepository: LocalImagesRepository): GetFavoriteImageUseCase {
+        return GetFavoriteImageUseCase(repository = localImagesRepository)
+    }
+
+    @Provides
+    fun provideGetThemeSettingUseCase(repository: AppSettingRepository): GetThemeSettingUseCase {
+        return GetThemeSettingUseCase(repository)
+    }
+
+    @Provides
+    fun provideSetThemeSettingUseCase(repository: AppSettingRepository): SetThemeSettingUseCase {
+        return SetThemeSettingUseCase(repository)
     }
 
 
